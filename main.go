@@ -4,6 +4,7 @@ import (
 	"go-booking/cmd"
 	"go-booking/config"
 	"go-booking/controller"
+	"go-booking/middleware"
 	"go-booking/repository"
 	"go-booking/routes"
 	"go-booking/service"
@@ -22,13 +23,15 @@ func main() {
 	}
 
 	var (
+		jwtService = service.NewJWTService()
 		//  User Module Dependency Injection
 		userRepository = repository.NewUserRepository(db)
-		userService    = service.NewUserService(userRepository)
+		userService    = service.NewUserService(userRepository, jwtService)
 		userController = controller.NewUserController(userService)
 	)
 	server := gin.Default()
-	routes.UserRoute(server, userController)
+	server.Use(middleware.CORSMiddleware())
+	routes.UserRoute(server, userController, jwtService)
 
 	port := os.Getenv("PORT")
 	if port == "" {
