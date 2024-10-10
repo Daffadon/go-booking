@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"go-booking/entity"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -10,7 +11,7 @@ import (
 type (
 	UserRepository interface {
 		RegisterUser(ctx context.Context, user entity.User) (entity.User, error)
-		CheckEmail(ctx context.Context, email string) (entity.User, error)
+		CheckIsEmailExist(ctx context.Context, email string) (entity.User, error)
 	}
 	userRepository struct {
 		db *gorm.DB
@@ -34,13 +35,15 @@ func (u *userRepository) RegisterUser(ctx context.Context, user entity.User) (en
 	return user, nil
 }
 
-func (u *userRepository) CheckEmail(ctx context.Context, email string) (entity.User, error) {
+func (u *userRepository) CheckIsEmailExist(ctx context.Context, email string) (entity.User, error) {
 	tx := u.db
 	var user entity.User
 	err := tx.Where("email = ?", email).First(&user).Error
 	if err != nil {
+		log.Println(err)
 		return user, err
 	}
 
 	return user, nil
 }
+
