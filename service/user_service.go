@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"go-booking/dto"
 	"go-booking/entity"
 	"go-booking/repository"
@@ -12,15 +13,18 @@ import (
 type (
 	UserService interface {
 		RegisterUser(ctx context.Context, req dto.UserCreateRequest) error
+		LoginUser(ctx context.Context, req dto.UserLoginRequest) (string, error)
 	}
 	userService struct {
-		userRepo repository.UserRepository
+		userRepo   repository.UserRepository
+		jwtService JWTService
 	}
 )
 
-func NewUserService(userRepo repository.UserRepository) UserService {
+func NewUserService(userRepo repository.UserRepository, jwtService JWTService) UserService {
 	return &userService{
-		userRepo: userRepo,
+		userRepo:   userRepo,
+		jwtService: jwtService,
 	}
 }
 
@@ -32,8 +36,8 @@ func (u *userService) RegisterUser(ctx context.Context, req dto.UserCreateReques
 	mu.Lock()
 	defer mu.Unlock()
 
-	_, err := u.userRepo.CheckEmail(ctx, req.Email)
-	if err != nil {
+	_, err := u.userRepo.CheckIsEmailExist(ctx, req.Email)
+	if err == nil {
 		return dto.ErrEmailAlreadyExists
 	}
 	req.Password, _ = utils.HashPasword(req.Password)
@@ -52,4 +56,19 @@ func (u *userService) RegisterUser(ctx context.Context, req dto.UserCreateReques
 	}
 
 	return nil
+}
+
+func (u *userService) LoginUser(ctx context.Context, req dto.UserLoginRequest) (string, error) {
+	user, err := u.userRepo.CheckIsEmailExist(ctx, req.Email)
+	if err != nil {
+		return "", dto.ErrEmailOrPasswordIsWrong
+	}
+
+	err = utils.ComparePassword(user.Password, req.Password)
+	if err != nil {
+		fmt.Print(err)
+		return "", dto.ErrEmailOrPasswordIsWrong
+	}
+	token := u.jwtService.GenerateToken(user.ID.String(), user.Role)
+	return token, nil
 }
