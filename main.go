@@ -28,10 +28,16 @@ func main() {
 		userRepository = repository.NewUserRepository(db)
 		userService    = service.NewUserService(userRepository, jwtService)
 		userController = controller.NewUserController(userService)
+
+		// Book Module Dependency Injection
+		bookRepository = repository.NewBookRepository(db)
+		bookService    = service.NewBookService(bookRepository)
+		bookController = controller.NewBookController(bookService)
 	)
 	server := gin.Default()
 	server.Use(middleware.CORSMiddleware())
 	routes.UserRoute(server, userController, jwtService)
+	routes.BookRoute(server, bookController, jwtService)
 
 	port := os.Getenv("PORT")
 	if port == "" {
