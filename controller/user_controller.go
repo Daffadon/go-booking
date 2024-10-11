@@ -37,7 +37,7 @@ func (u *userController) Register(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
-	res := utils.ReturnResponseSuccess(200, dto.MESSAGE_SUCCESS_REGISTER_USER, nil)
+	res := utils.ReturnResponseSuccess(200, dto.MESSAGE_SUCCESS_REGISTER_USER, nil, nil)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -57,6 +57,6 @@ func (u *userController) Login(ctx *gin.Context) {
 	tokenResponse := map[string]string{
 		"token": token,
 	}
-	res := utils.ReturnResponseSuccess(200, dto.MESSAGE_SUCCESS_LOGIN_USER, tokenResponse)
+	res := utils.ReturnResponseSuccess(200, dto.MESSAGE_SUCCESS_LOGIN_USER, tokenResponse, nil)
 	ctx.JSON(http.StatusOK, res)
 }
