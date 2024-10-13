@@ -12,6 +12,7 @@ import (
 type (
 	BookRepository interface {
 		GetBooksWithPagination(ctx context.Context, req dto.PaginationRequest) (dto.BookGetAllWithPaginationResponse, error)
+		GetBookByID(ctx context.Context, id string) (dto.BookResponseWithoutTimestamp, error)
 	}
 	bookRepository struct {
 		db *gorm.DB
@@ -44,5 +45,21 @@ func (b *bookRepository) GetBooksWithPagination(ctx context.Context, req dto.Pag
 			NextPage:  req.Page + 1,
 			TotalPage: uint16(totalPage),
 		},
+	}, nil
+}
+
+func (b *bookRepository) GetBookByID(ctx context.Context, id string) (dto.BookResponseWithoutTimestamp, error) {
+	var book entity.Book
+	if err := b.db.WithContext(ctx).Where("id = ?", id).First(&book).Error; err != nil {
+		return dto.BookResponseWithoutTimestamp{}, err
+	}
+	return dto.BookResponseWithoutTimestamp{
+		ID:          book.ID.String(),
+		Title:       book.Title,
+		Author:      book.Author,
+		Cover:       book.Cover,
+		Description: book.Description,
+		Stock:       book.Stock,
+		Price:       book.Price,
 	}, nil
 }

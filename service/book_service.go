@@ -9,6 +9,7 @@ import (
 type (
 	BookService interface {
 		GetBooksWithPagination(ctx context.Context, req dto.PaginationRequest) (dto.BookAllResponse, error)
+		GetBookByID(ctx context.Context, id string) (dto.BookResponseWithoutTimestamp, error)
 	}
 	bookService struct {
 		bookRepository repository.BookRepository
@@ -42,3 +43,12 @@ func (b *bookService) GetBooksWithPagination(ctx context.Context, req dto.Pagina
 		PaginationResponse: booksWithPaginate.PaginationResponse,
 	}, nil
 }
+
+func (b *bookService) GetBookByID(ctx context.Context, id string) (dto.BookResponseWithoutTimestamp, error) {
+	book, err := b.bookRepository.GetBookByID(ctx, id)
+	if err != nil {
+		return dto.BookResponseWithoutTimestamp{}, err
+	}
+	return book, nil
+}
+

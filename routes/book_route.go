@@ -12,5 +12,6 @@ func BookRoute(route *gin.Engine, bookController controller.BookController, jwtS
 	routes := route.Group("/api/book")
 	{
 		routes.GET("/book", middleware.AuthMiddleware(jwtService), bookController.GetBooks)
+		routes.GET("/book/:id", middleware.AuthMiddleware(jwtService), bookController.GetBookByID)
 	}
 }

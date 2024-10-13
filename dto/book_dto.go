@@ -31,4 +31,8 @@ type (
 		Data []BookResponseWithoutTimestamp `json:"data"`
 		PaginationResponse
 	}
+
+	BookGetByIDRequest struct {
+		ID string `uri:"id" binding:"required"`
+	}
 )
