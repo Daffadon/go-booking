@@ -2,7 +2,7 @@ package dto
 
 type (
 	PaginationRequest struct {
-		Page uint16 `json:"page"`
+		Page uint16 `form:"page"`
 	}
 	PaginationResponse struct {
 		Page      uint16 `json:"page"`
