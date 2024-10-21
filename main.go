@@ -45,7 +45,7 @@ func main() {
 	}
 
 	var serve string
-	if os.Getenv("APP_ENV") == "developement" {
+	if os.Getenv("APP_ENV") == "development" {
 		serve = "127.0.0.1:" + port
 	} else {
 		serve = ":" + port
