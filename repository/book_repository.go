@@ -13,6 +13,9 @@ type (
 	BookRepository interface {
 		GetBooksWithPagination(ctx context.Context, req dto.PaginationRequest) (dto.BookGetAllWithPaginationResponse, error)
 		GetBookByID(ctx context.Context, id string) (dto.BookResponseWithoutTimestamp, error)
+		CreateBook(ctx context.Context, req entity.Book) (entity.Book, error)
+		UpdateBook(ctx context.Context, req *dto.BookResponseWithoutTimestamp) (dto.BookResponseWithoutTimestamp, error)
+		DeleteBook(ctx context.Context, id string) error
 	}
 	bookRepository struct {
 		db *gorm.DB
@@ -62,4 +65,24 @@ func (b *bookRepository) GetBookByID(ctx context.Context, id string) (dto.BookRe
 		Stock:       book.Stock,
 		Price:       book.Price,
 	}, nil
+}
+
+func (b *bookRepository) CreateBook(ctx context.Context, req entity.Book) (entity.Book, error) {
+	if err := b.db.WithContext(ctx).Create(req); err != nil {
+		return entity.Book{}, dto.ErrFailedToCreateBook
+	}
+	return req, nil
+}
+func (b *bookRepository) UpdateBook(ctx context.Context, req *dto.BookResponseWithoutTimestamp) (dto.BookResponseWithoutTimestamp, error) {
+	if err := b.db.WithContext(ctx).Save(&req); err != nil {
+		return dto.BookResponseWithoutTimestamp{}, err.Error
+	}
+	return *req, nil
+}
+
+func (b *bookRepository) DeleteBook(ctx context.Context, id string) error {
+	if err := b.db.WithContext(ctx).Where("id = ?", id).Delete(&entity.Book{}).Error; err != nil {
+		return err
+	}
+	return nil
 }
