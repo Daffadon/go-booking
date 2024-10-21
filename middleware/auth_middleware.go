@@ -41,7 +41,15 @@ func AuthMiddleware(jwtService service.JWTService) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
+		role, err := jwtService.GetRoleByToken(validatedToken)
+		if err != nil {
+			res := utils.ReturnResponseError(401, dto.MESSAGE_FAILED_TOKEN_NOT_ASSOCIATED)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, res)
+			return
+		}
+
 		c.Set("userId", userId)
+		c.Set("role",role)
 		c.Set("token", token)
 		c.Next()
 	}

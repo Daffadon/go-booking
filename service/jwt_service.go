@@ -14,6 +14,7 @@ type (
 		GenerateToken(userID, role string) string
 		ValidateToken(token string) (*jwt.Token, error)
 		GetUserIDByToken(token *jwt.Token) (string, error)
+		GetRoleByToken(token *jwt.Token) (string, error)
 	}
 	jwtService struct {
 		secretKey string
@@ -75,4 +76,10 @@ func (j *jwtService) GetUserIDByToken(token *jwt.Token) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	id := fmt.Sprintf("%v", claims["user_id"])
 	return id, nil
+}
+
+func (j *jwtService) GetRoleByToken(token *jwt.Token) (string, error) {
+	claims := token.Claims.(jwt.MapClaims)
+	role := fmt.Sprintf("%v", claims["role"])
+	return role, nil
 }
