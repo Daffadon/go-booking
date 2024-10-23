@@ -36,6 +36,7 @@ func main() {
 	)
 	server := gin.Default()
 	server.Use(middleware.CORSMiddleware())
+	server.Static("/assets/book", "./assets/book")
 	routes.UserRoute(server, userController, jwtService)
 	routes.BookRoute(server, bookController, jwtService)
 

@@ -25,3 +25,6 @@ tmp
 
 # env file
 .env
+
+#assets
+assets/
