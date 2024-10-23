@@ -66,8 +66,8 @@ func (b *bookService) CreateBook(ctx context.Context, req dto.BookCreateRequest)
 		coverId := uuid.New().String()
 		ext := utils.GetFileExtension(req.Cover.Filename)
 
-		filename := fmt.Sprintf("book/%s.%s", coverId, ext)
-		if err := utils.UploadFile(req.Cover, filename); err != nil {
+		coverFilename = fmt.Sprintf("book/%s%s", coverId, ext)
+		if err := utils.UploadFile(req.Cover, coverFilename); err != nil {
 			return entity.Book{}, dto.ErrFailedToUploadCover
 		}
 	}
@@ -79,13 +79,13 @@ func (b *bookService) CreateBook(ctx context.Context, req dto.BookCreateRequest)
 		Stock:       req.Stock,
 		Price:       req.Price,
 	}
-
 	createdBook, err := b.bookRepository.CreateBook(ctx, book)
 	if err != nil {
 		return entity.Book{}, dto.ErrFailedToCreateBook
 	}
 	return createdBook, nil
 }
+
 func (b *bookService) UpdateBook(ctx context.Context, req dto.BookUpdateRequest) (dto.BookResponseWithoutTimestamp, error) {
 	book, err := b.bookRepository.GetBookByID(ctx, req.ID)
 	if err != nil {
@@ -98,17 +98,17 @@ func (b *bookService) UpdateBook(ctx context.Context, req dto.BookUpdateRequest)
 		book.Author = *req.Author
 	}
 	if req.Cover != nil {
-		// if the cover is new, delete pervious cover and upload new
-		err := utils.DeleteFile(book.Cover)
-		if err != nil {
-			return dto.BookResponseWithoutTimestamp{}, err
-		}
 		coverId := uuid.New().String()
 		ext := utils.GetFileExtension(req.Cover.Filename)
 
 		filename := fmt.Sprintf("book/%s.%s", coverId, ext)
 		if err := utils.UploadFile(req.Cover, filename); err != nil {
-			return dto.BookResponseWithoutTimestamp{}, err
+			return dto.BookResponseWithoutTimestamp{}, dto.ErrFailedUpdateBook
+		}
+
+		err := utils.DeleteFile(book.Cover)
+		if err != nil {
+			return dto.BookResponseWithoutTimestamp{}, dto.ErrFailedUpdateBook
 		}
 		book.Cover = filename
 	}

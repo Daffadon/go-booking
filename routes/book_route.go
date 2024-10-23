@@ -11,10 +11,10 @@ import (
 func BookRoute(route *gin.Engine, bookController controller.BookController, jwtService service.JWTService) {
 	routes := route.Group("/api/book")
 	{
-		routes.GET("/book", middleware.AuthMiddleware(jwtService), bookController.GetBooks)
-		routes.GET("/book/:id", middleware.AuthMiddleware(jwtService), bookController.GetBookByID)
-		routes.POST("/book", middleware.AuthMiddleware(jwtService), middleware.RoleMiddleware(jwtService), bookController.CreateBook)
-		routes.PATCH("/book/:id", middleware.AuthMiddleware(jwtService), middleware.RoleMiddleware(jwtService), bookController.UpdateBook)
-		routes.DELETE("/book/:id", middleware.AuthMiddleware(jwtService), middleware.RoleMiddleware(jwtService), bookController.DeleteBook)
+		routes.GET("/", middleware.AuthMiddleware(jwtService), bookController.GetBooks)
+		routes.GET("/:id", middleware.AuthMiddleware(jwtService), bookController.GetBookByID)
+		routes.POST("/", middleware.AuthMiddleware(jwtService), middleware.RoleMiddleware(jwtService), bookController.CreateBook)
+		routes.PATCH("/:id", middleware.AuthMiddleware(jwtService), middleware.RoleMiddleware(jwtService), bookController.UpdateBook)
+		routes.DELETE("/:id", middleware.AuthMiddleware(jwtService), middleware.RoleMiddleware(jwtService), bookController.DeleteBook)
 	}
 }

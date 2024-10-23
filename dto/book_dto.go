@@ -11,6 +11,10 @@ import (
 var (
 	ErrFailedToCreateBook  = errors.New("failed to create book")
 	ErrFailedToUploadCover = errors.New("failed to upload cover")
+	ErrFailedBooksNotFound = errors.New("books not found")
+	ErrFailedDeleteBook    = errors.New("failed to delete book")
+	ErrFailedToGetBook     = errors.New("failed to get books")
+	ErrFailedUpdateBook    = errors.New("failed to update book")
 )
 var (
 	MESSAGE_SUCCESS_GET_BOOKS   = "Succesfully get books"
@@ -18,6 +22,7 @@ var (
 	MESSAGE_SUCCESS_DELETE_BOOK = "Succesfully Delete book"
 	MESSAGE_SUCCESS_UPDATE_BOOK = "Succesfully update book"
 
+	MESSAGE_FAILED_WRONG_FILE_EXT  = "Wrong file extension. allowed: jpg, jpeg, png"
 	MESSAGE_FAILED_BOOKS_NOT_FOUND = "Book Not Found"
 	MESSAGE_FAILED_CREATE_BOOK     = "Failed to create book"
 	MESSAGE_FAILED_PAGE_IS_WRONG   = "Page is in wrong format"

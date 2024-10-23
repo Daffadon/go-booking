@@ -33,7 +33,7 @@ func (u *userController) Register(ctx *gin.Context) {
 		return
 	}
 	if err := u.userService.RegisterUser(ctx.Request.Context(), req); err != nil {
-		response := utils.ReturnResponseError(400, dto.MESSAGE_FAILED_REGISTER_USER)
+		response := utils.ReturnResponseError(400, err.Error())
 		ctx.JSON(http.StatusBadRequest, response)
 		return
 	}
